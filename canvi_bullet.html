@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html >
+	<head>
+		<meta charset="UTF-8">
+			<title>Slow Motion Shatter</title>
+				<script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="pixi" src="pixi.js"></script>
+				    <style>
+						#stage{
+							display: block;
+							background: #fff;
+							border-bottom: 10px solid #614126;
+						}
+					</style>
+	</head>
+
+	<body>
+		<canvas id="stage"></canvas>
+		<script src='js/physicsjs-full-0.6.0.min.js'></script>
+		<script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="tween" src="js/tweenv2.js"></script>
+
+		<script>
+		/**
+		De l'exercici "bullet time" #1 i de la idea de #2 hem creat el bullet time amb el nostre nom
+		#1 http://codepen.io/tag/physicsjs/3/
+		#2 http://wellcaffeinated.net/PhysicsJS/#demo-9
+		**/
+
+		Physics({ timestep: 2 },function(world){
+			var viewWidth = (window.innerWidth - 20);
+			var viewHeight = (window.innerHeight - 20);
+			//bound of the window
+			var viewportBounds = Physics.aabb(0, 0, viewWidth, viewHeight)
+				,edgeBounce
+				,renderer;
+				
+			// create a renderer
+			renderer = Physics.renderer('canvas', {
+				el: 'stage'
+				,width: viewWidth
+				,height: viewHeight
+			});
+
+			// add the renderer
+			world.add(renderer);
+			// render on each step
+			world.on('step', function () {
+				world.render();
+			});
+
+			// constrain objects to these bounds
+			edgeBounce = Physics.behavior('edge-collision-detection', {
+				aabb: viewportBounds
+				,restitution: 0.2
+				,cof: 0.8
+			});
+
+			// resize events
+			window.addEventListener('resize', function () {
+				var viewWidth = (window.innerWidth - 20);
+				var viewHeight = (window.innerHeight - 20);
+			  
+				renderer.el.width = viewWidth;
+				renderer.el.height = viewHeight;
+
+				viewportBounds = Physics.aabb(0, 0, viewWidth, viewHeight);
+				// update the boundaries
+				edgeBounce.setAABB(viewportBounds);
+
+			}, true);
+
+			// create some bodies
+			var ring = Physics.body('circle', {
+				x: -20
+				,y: viewHeight - 120
+				,vx: 2.5
+				,mass: 8
+				,radius: 25
+				,restitution: 0.99
+				,angularVelocity: 0
+				,label: 'ring'
+				,treatment: 'dynamic'
+				,styles: {
+					fillStyle: '#CC2529'
+					,angleIndicator: '#CC2529'
+				}
+			});
+			
+			// squares
+			var squares = [];
+			
+			//LLETRA A
+			for ( var i = 0, l = 24; i < l; ++i ) {
+				var col = ( i == 1 || i == 2 || i == 3 || i == 4 || i == 5 || i == 6 || i == 9 || i == 12 || i == 15 || i == 19 || i == 20 || i == 21 || i == 22 || i == 23) ? "#7f0000" : "#dadada";
+				squares.push( Physics.body('rectangle', {
+					width: 30
+					,height: 30
+					,x: (32 * (i / 6 | 0) + viewWidth - 30 * 8) - 640
+					,y: 30 * (i % 6) + viewHeight - 30 * 6 + 15
+					,vx: 0
+					,cof: 0.99
+					,restitution: 0.99
+					,label: 'box'
+					,styles: {
+						fillStyle: col
+						,angleIndicator: col
+					}
+				}));
+			}
+			
+			//LLETRA I
+			for ( var i = 0, l = 30; i < l; ++i ){
+				var col = (i == 12 ||i == 14 ||i == 15 ||i == 16 ||i == 17) ? "#396AB1" : "#dadada";
+				squares.push( Physics.body('rectangle', {
+					width: 30
+					,height: 30
+					,x: (32 * (i / 6 | 0) + viewWidth - 30 * 8) - 495
+					,y: 30 * (i % 6) + viewHeight - 30 * 6 + 15
+					,vx: 0
+					,cof: 0.99
+					,restitution: 0.99
+					,label: 'box'
+					,styles: {
+						fillStyle: col
+						,angleIndicator: col
+					}
+				}));
+			}
+			
+			//LLETRA T
+			for ( var i = 0, l = 30; i < l; ++i ){
+				var col = (i == 0 ||i == 6 ||i == 12 ||i == 13 ||i == 14 ||i == 15||i == 16||i == 17||i == 18||i == 24) ? "#7f0000" : "#dadada";
+				squares.push( Physics.body('rectangle', {
+					width: 30
+					,height: 30
+					,x: (32 * (i / 6 | 0) + viewWidth - 30 * 8) - 320
+					,y: 30 * (i % 6) + viewHeight - 30 * 6 + 15
+					,vx: 0
+					,cof: 0.99
+					,restitution: 0.99
+					,label: 'box'
+					,styles: {
+						fillStyle: col
+						,angleIndicator: col
+					}
+				}));
+			}
+			
+			//LLETRA O
+			for ( var i = 0, l = 24; i < l; ++i ) {
+				var col = (i == 6 || i == 1 || i == 2 || i == 3 || i == 4 || i == 11 || i == 12 || i == 17 || i == 19 || i == 20 || i == 21 || i == 22 ) ? "#396AB1" : "#dadada";
+				squares.push( Physics.body('rectangle', {
+					width: 30
+					,height: 30
+					,x: (32 * (i / 6 | 0) + viewWidth - 30 * 8) - 145
+					,y: 30 * (i % 6) + viewHeight - 30 * 6 + 15
+					,vx: 0
+					,cof: 0.99
+					,restitution: 0.99
+					,label: 'box'
+					,styles: {
+						fillStyle: col
+						,angleIndicator: col
+					}
+				}));
+			}
+			//LLETRA R
+			for ( var i = 0, l = 30; i < l; ++i ){
+				var col = (i == 0 ||i == 1 ||i == 2 ||i == 3 ||i == 4 ||i == 5||i == 6||i == 9||i == 12||i == 15||i == 18||i == 21||i == 22||i == 24||i == 25||i == 26||i == 27||i == 29) ? "#7f0000" : "#dadada";
+				squares.push( Physics.body('rectangle', {
+					width: 30
+					,height: 30
+					,x: (32 * (i / 6 | 0) + viewWidth - 30 * 8)
+					,y: 30 * (i % 6) + viewHeight - 30 * 6 + 15
+					,vx: 0
+					,cof: 0.99
+					,restitution: 0.99
+					,label: 'box'
+					,styles: {
+						fillStyle: col
+						,angleIndicator: col
+					}
+				}));
+			}
+			
+			world.add( squares );
+
+			setTimeout(function(){
+
+				world.add( ring );
+
+			}, 2500);
+
+			// setup bullet time
+			function bulletTime( active ){
+				// warp is the world warp factor. 0.03 is slowing the world down
+				var warp = active === false ? 1 : 0.03
+					,tween
+					;
+
+				tween = new TWEEN.Tween( { warp: world.warp() } )
+					.to( { warp: warp }, 600 )
+					.easing( TWEEN.Easing.Quadratic.Out )
+					.onUpdate( function () {
+						// set the world warp on every tween step
+						world.warp( this.warp );
+					} )
+					.start()
+					;
+			}
+
+			// query to find a collision of the bullet
+			var query = Physics.query({
+				$or: [
+					{ bodyA: { label: 'ring' }, bodyB: { label: 'box' } }
+					,{ bodyB: { label: 'ring' }, bodyA: { label: 'box' } }
+				]
+			});
+
+			// enter bullet time on first collision
+			world.on('collisions:detected', function( data, e ){
+				// find the first collision of the bullet with a box
+				var found = Physics.util.find( data.collisions, query );
+				if ( found ){
+					// enter bullet time
+					bulletTime();
+					// ... for a few seconds
+					setTimeout(function(){
+						bulletTime(false);
+					}, 2000);
+					// stop checking
+					world.off(e.topic, e.handler);
+				}
+			});
+
+			// activate bullet time on pokes
+			world.on({
+				'interact:poke': function( pos ){
+					// activate bullet time
+					bulletTime();
+				}
+				,'interact:release': function(){
+					// de-activate bullet time
+					bulletTime(false);
+				}
+			});
+
+			// add things to the world
+			world.add([
+				Physics.behavior('interactive', { el: renderer.el })
+				,Physics.behavior('constant-acceleration')
+				,Physics.behavior('body-impulse-response')
+				,Physics.behavior('body-collision-detection')
+				,Physics.behavior('sweep-prune')
+				,edgeBounce
+			]);
+			
+			// subscribe to ticker to advance the simulation
+			Physics.util.ticker.on(function( time ) {
+				TWEEN.update();
+				world.step( time );
+			});
+
+			// start the ticker
+			Physics.util.ticker.start();
+		});
+		</script>
+	</body>
+</html>
